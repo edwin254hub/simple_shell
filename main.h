@@ -15,7 +15,7 @@
 
 void read_cmd(char *cmd);
 void execute_cmd(char *cmd, char *envp[]);
-int find_executable(const char *file, char *result);
+char *resolve_path(char *cmd, char *envp[]);
 int main(int argc, char *argv[], char *envp[]);
 
 
