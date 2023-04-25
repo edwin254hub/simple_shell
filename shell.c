@@ -20,9 +20,20 @@ int main(int argc, char *argv[], char *envp[])
 
 	while (1)
 	{
-		printf("> ");
-		read_cmd(cmd);
-		execute_cmd(cmd, envp);
+	printf("> ");
+	read_cmd(cmd);
+
+	char *space = strchr(cmd, ' ');
+
+	if (space != NULL)
+	{
+	handle_cmd_args(cmd, envp);
+	}
+	else
+	{
+	exec_env(cmd);
+	execute_builtin(cmd);
+	execute_cmd(cmd, envp);
 	}
 
 	return (0);
@@ -65,34 +76,43 @@ void read_cmd(char *cmd)
 
 void execute_cmd(char *cmd, char *envp[])
 {
-	pid_t pid = fork();
+	char full_cmd[MAX_CMD_LEN];
 
-	int cmd_status;
+	if (find_executable(cmd, full_cmd) == -1)
+	{
+		printf("Command not found: %s\n", cmd);
+		set_last_cmd_status(1);
+	return;
+	}
+
+	pid_t pid = fork();
 
 	if (pid < 0)
 	{
 		perror("fork");
-		exit(1);
+		set_last_cmd_status(1);
+	return;
 	}
 	else if (pid == 0)
 	{
-		/* child process */
-	char *args[] = { cmd, NULL };
+	char *args[] = { full_cmd, NULL };
 
-	if (execve(cmd, args, envp) == -1)
+	if (execve(full_cmd, args, envp) == -1)
 	{
 		fprintf(stderr, "Error: %s\n", strerror(errno));
-		exit(1);
+		set_last_cmd_status(1);
+	exit(1);
 	}
 	}
 	else
 	{
-		/* parent process */
-	if (waitpid(pid, &cmd_status, 0) == -1)
+	if (waitpid(pid, &last_cmd_status, 0) == -1)
 	{
 		perror("waitpid");
-		exit(1);
+		set_last_cmd_status(1);
+	return;
 	}
 	}
+
 }
 #endif /* MY_SHELL_H */
