@@ -65,8 +65,15 @@ void read_cmd(char *cmd)
 
 void execute_cmd(char *cmd, char *envp[])
 {
-	pid_t pid = fork();
+	char *full_path = resolve_path(cmd, envp);
 
+	if (full_path == NULL)
+	{
+		printf("%s: command not found\n", cmd);
+		return;
+	}
+
+	pid_t pid = fork();
 	int cmd_status;
 
 	if (pid < 0)
@@ -77,22 +84,23 @@ void execute_cmd(char *cmd, char *envp[])
 	else if (pid == 0)
 	{
 		/* child process */
-	char *args[] = { cmd, NULL };
+		char *args[] = { full_path, NULL };
 
-	if (execve(cmd, args, envp) == -1)
-	{
-		fprintf(stderr, "Error: %s\n", strerror(errno));
-		exit(1);
-	}
+		if (execve(full_path, args, envp) == -1)
+		{
+			fprintf(stderr, "Error: %s\n", strerror(errno));
+			exit(1);
+		}
 	}
 	else
 	{
 		/* parent process */
-	if (waitpid(pid, &cmd_status, 0) == -1)
-	{
-		perror("waitpid");
-		exit(1);
+		if (waitpid(pid, &cmd_status, 0) == -1)
+		{
+			perror("waitpid");
+			exit(1);
+		}
 	}
-	}
+	free(full_path);
 }
 #endif /* MY_SHELL_H */
