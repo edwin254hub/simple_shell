@@ -22,15 +22,6 @@ int main(int argc, char *argv[], char *envp[])
 	{
 	printf("> ");
 	read_cmd(cmd);
-
-	char *space = strchr(cmd, ' ');
-
-	if (space != NULL)
-	{
-	handle_cmd_args(cmd, envp);
-	}
-	else
-	{
 	exec_env(cmd);
 	execute_builtin(cmd);
 	execute_cmd(cmd, envp);
