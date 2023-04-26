@@ -23,4 +23,5 @@ int string_length(const char *str);
 int string_compare(char *stringA, char *stringB);
 void string_copy(char *source, char *destination);
 char *duplicate_str(const char *str_source);
+ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 #endif /*MAIN_H_*/
