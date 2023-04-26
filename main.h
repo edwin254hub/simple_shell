@@ -17,7 +17,8 @@ void read_cmd(char *cmd);
 void execute_cmd(char *cmd, char *envp[]);
 char *resolve_path(char *cmd, char *envp[]);
 int main(int argc, char *argv[], char *envp[]);
-
-
+void execute_builtin(char *cmd);
+void exec_env(char *cmd);
+void handle_cmd_args(char *cmd, char *envp[]);
 
 #endif /*MAIN_H_*/
