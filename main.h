@@ -24,4 +24,5 @@ int string_compare(char *stringA, char *stringB);
 void string_copy(char *source, char *destination);
 char *duplicate_str(const char *str_source);
 ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+char *_strtok(char *str, const char *delim);
 #endif /*MAIN_H_*/
